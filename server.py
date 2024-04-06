@@ -6,7 +6,6 @@ app = Flask(__name__)
  
 @app.route('/')
 def index():
-    # HTML avec deux boutons, un qui pointe vers '/get_data' et l'autre vers '/articles'
     return '''
     <html>
         <head>
@@ -49,8 +48,7 @@ def get_data():
  
 @app.route('/articles')
 def articles():
-    # Votre logique pour '/articles' ici, identique à votre précédente fonction 'articles'
-    api_key = "c20aa73bf54d4eff8de2627c71956efe"  # Utilisez votre clé API valide
+    api_key = "c20aa73bf54d4eff8de2627c71956efe"  
     url = "https://newsapi.org/v2/everything"
     parameters = {
         "q": "intelligence artificielle",  
