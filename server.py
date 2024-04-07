@@ -1,12 +1,12 @@
 from flask import Flask, request, jsonify, render_template_string, redirect
 import requests
+from datetime import datetime
 
 
 app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    # HTML avec deux boutons et un champ de saisie pour spécifier un numéro d'article
     if request.method == 'POST':
         article_number = request.form.get('article_number')
         if article_number:
@@ -39,7 +39,7 @@ def get_data():
     url = "https://newsapi.org/v2/everything"
     parameters = {
         "q": "intelligence artificielle",  
-        "pageSize": 5, 
+        "pageSize": 10, 
         "apiKey": api_key, 
         "language": "fr" 
     }
@@ -58,13 +58,13 @@ def get_data():
 
 @app.route('/articles')
 def articles():
-    api_key = "c20aa73bf54d4eff8de2627c71956efe"
+    api_key = "c20aa73bf54d4eff8de2627c71956efe"  
     url = "https://newsapi.org/v2/everything"
     parameters = {
         "q": "intelligence artificielle",  
-        "pageSize": 5, 
-        "apiKey": api_key, 
-        "language": "fr" 
+        "pageSize": 10,
+        "apiKey": api_key,
+        "language": "fr"
     }
     
     response = requests.get(url, params=parameters)
@@ -92,7 +92,7 @@ def get_article(number):
     url = "https://newsapi.org/v2/everything"
     parameters = {
         "q": "intelligence artificielle",
-        "pageSize": 100,  
+        "pageSize": 10,  
         "apiKey": api_key,
         "language": "fr"
     }
@@ -103,19 +103,17 @@ def get_article(number):
         articles = response.json().get('articles', [])
         
         if number - 1 < len(articles):
-            article = articles[number - 1] 
-            article_details = {
-                "titre": article.get('title', 'Titre non disponible'),
-                "date de publication": article.get('publishedAt', 'Date non disponible'),
-                "source": article.get('source', {}).get('name', 'Source non disponible'),
-                "url": article.get('url', 'URL non disponible')
-            }
-            return jsonify(article_details)
+            article = articles[number - 1]  
+            article_url = article.get('url', None)
+            
+            if article_url:
+                return redirect(article_url)  
+            else:
+                return "URL de l'article non disponible", 404
         else:
-            return "Numéro d'article non valide ou hors de portée.", 404
+            return "Numéro d'article non valide ou hors de portée", 404
     else:
-        return "Erreur lors de la récupération des articles depuis l'API NewsAPI.", 500
-
+        return "Erreur lors de la récupération des articles depuis l'API NewsAPI", 500
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
